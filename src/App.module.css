@@ -1,0 +1,13 @@
+.App {
+  text-align: center;
+
+  svg {
+    width: 400px;
+    border: 1px solid #CCC;
+  }
+}
+
+button {
+  display: block;
+  margin: 1rem auto;
+}
