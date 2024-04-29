@@ -1,18 +1,22 @@
 import { type Component } from 'solid-js';
 
 import { useSvgFlowContext } from '../../context/SvgFlowContext';
+import { snapNode } from '../../utils/node';
 
 const SvgFlowCanvasConnection: Component<{ index: number }> = props => {
   const { svgFlow } = useSvgFlowContext();
 
   const path = () => {
-    const connection = svgFlow.connections[props.index];
-    const fromNode = svgFlow.nodes.find(node => node.id === connection.from);
-    const toNode = svgFlow.nodes.find(node => node.id === connection.to);
+    const connection = svgFlow.data.connections[props.index];
+    let fromNode = svgFlow.data.nodes.find(node => node.id === connection.from);
+    let toNode = svgFlow.data.nodes.find(node => node.id === connection.to);
     
     if (!fromNode || !toNode) {
       return;
     }
+
+    fromNode = snapNode(fromNode, svgFlow.config.snapTo);
+    toNode = snapNode(toNode, svgFlow.config.snapTo);
 
     const from = {
       x: fromNode.x + (1 + connection.pin) * fromNode.width / (1 + (fromNode.pins ?? 1)),
@@ -26,7 +30,7 @@ const SvgFlowCanvasConnection: Component<{ index: number }> = props => {
     const distanceRatio = Math.max(Math.min(Math.abs(xDist / yDist), 0.4), 0);
     let controlPointOffset = yDist * (0.5 + distanceRatio);
     if (Math.abs(controlPointOffset) < minControlPointOffset) {
-      controlPointOffset = (minControlPointOffset * Math.abs(yDist)) / yDist;
+      controlPointOffset = yDist ? (minControlPointOffset * Math.abs(yDist)) / yDist : 0;
     }
 
     const path = `

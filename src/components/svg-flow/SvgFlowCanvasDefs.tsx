@@ -18,8 +18,10 @@ const SvgFlowCanvasDefs: Component = () => {
         <path
           stroke={svgFlow.config.stroke}
           stroke-width={svgFlow.config.strokeWidth}
+          stroke-linecap='round'
+          stroke-linejoin='round'
           fill='none'
-          d='M0 0L5 5L0 10'
+          d='M1 1L5 5L1 9'
         />
       </marker>
     </defs>

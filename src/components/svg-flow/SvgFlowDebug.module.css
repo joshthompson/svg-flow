@@ -1,0 +1,9 @@
+.SvgFlowDebug {
+  text-align: left;
+  display: flex;
+  gap: 1rem;
+
+  > * {
+    flex: 1 1 0;
+  }
+}

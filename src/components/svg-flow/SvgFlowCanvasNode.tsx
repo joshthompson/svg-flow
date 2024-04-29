@@ -1,10 +1,11 @@
-import { createSignal, type Component } from 'solid-js';
+import { type Component, onMount } from 'solid-js';
 
 import { SvgFlowNode } from '../../models/canvas';
 import SvgFlowCanvasNodeContent from './SvgFlowCanvasNodeContent';
 import { Dynamic } from 'solid-js/web';
 import SvgFlowCanvasNodePins from './SvgFlowCanvasNodePins';
 import { useSvgFlowContext } from '../../context/SvgFlowContext';
+import { snapNode } from '../../utils/node';
 
 const SvgFlowCanvasNode: Component<{
   node: SvgFlowNode,
@@ -12,33 +13,42 @@ const SvgFlowCanvasNode: Component<{
 }> = props => {
   const { svgFlow, setSvgFlow } = useSvgFlowContext();
 
-  const [dragging, setDragging] = createSignal(false);
-  const [mousePosition, setMousePosition] = createSignal<{ x: number; y: number }>({ x: 0, y: 0 });
+  const dragging = () => props.node.id === svgFlow.state.draggingNode;
 
-  const onMouseDown = (event: MouseEvent) => {
-    setDragging(true);
-    setMousePosition({ x: event.x, y: event.y });
+  const onMouseOver = () => setSvgFlow('state', 'hoverNode', props.node.id);
+  const onMouseLeave = () => setSvgFlow('state', 'hoverNode', prev => prev === props.node.id ? undefined : prev);
+  
+  let nodeContentRef: SVGForeignObjectElement | undefined;
+  const nodeContentResizeObserver = new ResizeObserver(() => autoResize());
+  const nodeContentMutationObserver = new MutationObserver(() => autoResize());
+  const autoResize = () => {
+    if (svgFlow.config.autoNodeHeight && nodeContentRef) {
+      const innerElement = nodeContentRef.children[0] as HTMLElement;
+      const innerContentHeight = innerElement?.offsetHeight;
+      setSvgFlow('data', 'nodes', node => node.id === props.node.id, 'height', innerContentHeight);
+    }
   };
-  const onMouseMove = (event: MouseEvent) => {
-    if (dragging()) {
-      setSvgFlow('nodes', node => node.id === props.node.id, 'x', prev => prev + event.x - mousePosition().x);
-      setSvgFlow('nodes', node => node.id === props.node.id, 'y', prev => prev + event.y - mousePosition().y);
-      setMousePosition({ x: event.x, y: event.y });
-    };
-  };
-  const onMouseUp = () => setDragging(false);
-  const onMouseLeave = () => setDragging(false);
+  
+  onMount(() => {
+    if (nodeContentRef) {
+      nodeContentMutationObserver.observe(nodeContentRef, { childList: true, subtree: true });
+      nodeContentResizeObserver.observe(nodeContentRef?.children[0]);
+      autoResize();
+    }
+  });
+
+  const snappedNode = () => snapNode(props.node, svgFlow.config.snapTo);
 
   return (
-    <g>
+    <g id={dragging() ? 'dragging-node' : undefined}>
       <foreignObject
-        x={props.node.x}
-        y={props.node.y}
+        ref={nodeContentRef}
+        x={snappedNode().x}
+        y={snappedNode().y}
         width={props.node.width}
         height={props.node.height}
-        onMouseDown={onMouseDown}
-        onMouseUp={onMouseUp}
-        onMouseMove={onMouseMove}
+        style={{ cursor: dragging() ? 'grabbing' : 'pointer' }}
+        onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}
       >
         <Dynamic
@@ -46,10 +56,7 @@ const SvgFlowCanvasNode: Component<{
           node={props.node}
         />
       </foreignObject>
-      <SvgFlowCanvasNodePins node={props.node} flow={svgFlow} />
-      {/* <text x={props.node.x + props.node.width + 10} y={props.node.y + props.node.height / 2 + 5}>
-        { JSON.stringify(state()) }
-      </text> */}
+      <SvgFlowCanvasNodePins node={snappedNode()} />
     </g>
   );
 };

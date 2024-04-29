@@ -1,19 +1,23 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
+  "name": "solid-svg-flow",
+  "version": "0.0.1",
+  "description": "SVG Flow can be used to render flow chart data onto an SVG canvas inside Solid.js",
   "scripts": {
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "vitest"
   },
   "license": "MIT",
   "devDependencies": {
+    "jsdom": "^24.0.0",
     "solid-devtools": "^0.29.2",
+    "solid-testing-library": "^0.5.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.11",
-    "vite-plugin-solid": "^2.8.2"
+    "vite-plugin-solid": "^2.8.2",
+    "vitest": "^1.5.3"
   },
   "dependencies": {
     "solid-js": "^1.8.11"

@@ -3,9 +3,9 @@ import { SvgFlowNode } from '../../models/canvas';
 
 const MyCustomNode: Component<{ node: SvgFlowNode }> = props => {
   return (
-    <>
-      node
-    </>
+    <div style='background: white; color: blue; border: 1px dashed black'>
+      node {props.node.id}
+    </div>
   );
 }
 

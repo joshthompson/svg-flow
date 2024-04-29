@@ -1,18 +1,30 @@
 export interface SvgFlow {
-  nodes: SvgFlowNode[];
-  connections: SvgFlowConnection[];
+  data: SvgFlowData;
   canvas: SvgFlowCanvas;
-  config: SvgFlowConfig;
+  state: SvgFlowState;
+  config: Required<SvgFlowConfig>;
 }
 
-export interface SvgFlowNode {
+export interface SvgFlowData<T = undefined> {
+  nodes: SvgFlowNode<T>[];
+  connections: SvgFlowConnection[];
+}
+
+export interface SvgFlowState {
+  width: number;
+  height: number;
+  hoverNode?: SvgFlowResourceID;
+  draggingNode?: SvgFlowResourceID;
+}
+
+export type SvgFlowNode<T = undefined> = {
   id: SvgFlowResourceID;
   x: number;
   y: number;
   width: number;
   height: number;
   pins?: number;
-}
+} & (T extends undefined ? {} : { data: T })
 
 export interface SvgFlowConnection {
   id: SvgFlowResourceID;
@@ -28,18 +40,16 @@ export interface SvgFlowCanvas {
 }
 
 export interface SvgFlowConfig {
-  background: string;
-  width: number;
-  height: number;
-
-  // styles: {
-  //   canvas?: SvgFlowCanvasStyle;
-  //   pin?: SvgFlowCanvasPinStyle;
-  //   connection?: SvgFlowCanvasConnectionStyle;
-  // }
-
-  stroke: string;
-  strokeWidth: number;
+  background?: string;
+  grid?: 'dots' | 'lines' | 'none';
+  autoNodeHeight?: boolean;
+  snapTo?: number;
+  resizeOnInit?: boolean;
+  stroke?: string;
+  strokeWidth?: number;
+  showControls?: boolean;
+  width?: string;
+  height?: string;
 }
 
 export type SvgFlowResourceID = number | string;

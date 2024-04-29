@@ -7,6 +7,8 @@ Each node of the flow chart can have a custom renderer.
 
 This project is currently an experiment I am using to learn Solid.js
 
+Checkout the latest (in progress) version: https://joshthompson.github.io/svg-flow/
+
 ## Usage
 
 Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
