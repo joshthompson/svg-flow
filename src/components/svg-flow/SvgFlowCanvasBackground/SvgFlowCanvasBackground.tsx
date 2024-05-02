@@ -1,5 +1,5 @@
-import { Component, Index, Show } from 'solid-js';
-import { useSvgFlowContext } from '../../context/SvgFlowContext';
+import { Component, Index, Match, Switch } from 'solid-js';
+import { useSvgFlowContext } from '../../../context/SvgFlowContext';
 
 const SvgFlowCanvasBackground: Component = () => {
   const { svgFlow } = useSvgFlowContext();
@@ -53,22 +53,24 @@ const SvgFlowCanvasBackground: Component = () => {
     return { x, y, width, height };
   }
 
-  const stroke = 'rgba(0, 0, 0, 0.02)'
-  const fill = 'rgba(0, 0, 0, 0.02)';
-  const baseRadius = 4;
+  const stroke = 'rgba(0, 0, 0, 0.02)';
+  const fill = 'rgba(0, 0, 0, 0.3)';
+  const baseRadius = 1;
   const radius = () => baseRadius / svgFlow.canvas.zoom;
 
   return (
     <g>
       <rect {...canvasBox()} fill={svgFlow.config.background}/>
-      <Show when={svgFlow.config.grid === 'dots'}>
-        <Index each={dots()}>
-          {dot => <circle cx={dot().x} cy={dot().y} r={radius()} fill={fill} />}
-        </Index>
-      </Show>
-      <Show when={svgFlow.config.grid === 'lines'}>
-        {lines()}
-      </Show>
+      <Switch>
+        <Match when={svgFlow.config.style === 'dots'}>
+          <Index each={dots()}>
+            {dot => <circle cx={dot().x} cy={dot().y} r={radius()} fill={fill} />}
+          </Index>
+        </Match>
+        <Match when={svgFlow.config.style === 'grid'}>
+          {lines()}
+        </Match>
+      </Switch>
     </g>
   );
 };

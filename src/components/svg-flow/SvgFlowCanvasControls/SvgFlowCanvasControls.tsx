@@ -1,16 +1,14 @@
 import { Component, Show } from 'solid-js';
-import { useSvgFlowContext } from '../../context/SvgFlowContext';
+import { useSvgFlowContext } from '../../../context/SvgFlowContext';
 
 const SvgFlowCanvasControls: Component = () => {
   const {
     svgFlow,
-    canvas: {
-      canZoomIn,
-      canZoomOut,
-      zoomToFit,
-      zoomIn,
-      zoomOut,
-    },
+    canZoomIn,
+    canZoomOut,
+    zoomToFit,
+    zoomIn,
+    zoomOut,
   } = useSvgFlowContext();
   
   return (

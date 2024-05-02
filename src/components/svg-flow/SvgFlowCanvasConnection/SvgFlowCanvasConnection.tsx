@@ -1,7 +1,7 @@
 import { type Component } from 'solid-js';
 
-import { useSvgFlowContext } from '../../context/SvgFlowContext';
-import { snapNode } from '../../utils/node';
+import { useSvgFlowContext } from '../../../context/SvgFlowContext';
+import { snapNode } from '../../../utils/node';
 
 const SvgFlowCanvasConnection: Component<{ index: number }> = props => {
   const { svgFlow } = useSvgFlowContext();
@@ -26,7 +26,7 @@ const SvgFlowCanvasConnection: Component<{ index: number }> = props => {
 
     const xDist = to.x - from.x;
     const yDist = to.y - from.y;
-    const minControlPointOffset = 10;
+    const minControlPointOffset = 30;
     const distanceRatio = Math.max(Math.min(Math.abs(xDist / yDist), 0.4), 0);
     let controlPointOffset = yDist * (0.5 + distanceRatio);
     if (Math.abs(controlPointOffset) < minControlPointOffset) {

@@ -2,12 +2,13 @@ import { Component, JSX, createContext, useContext } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { SvgFlow } from '../models/canvas';
 import SvgFlowContextCanvasMutations from './SvgFlowContextCanvasMutations';
+import SvgFlowContextNodeMutations from './SvgFlowContextNodeMutations';
 
 export const DefaultSvgFlowConfig: SvgFlow['config'] = {
   background: '#FDFDFD',
   stroke: '#DEDEDE',
   strokeWidth: 1,
-  grid: 'lines',
+  style: 'dots',
   snapTo: 0,
   autoNodeHeight: true,
   resizeOnInit: true,
@@ -15,6 +16,8 @@ export const DefaultSvgFlowConfig: SvgFlow['config'] = {
   showDebug: false,
   width: '800px',
   height: '500px',
+  allowConnectionEdit: true,
+  allowNodeMove: true,
 };
 
 function useProvideValue() {
@@ -53,7 +56,8 @@ export const useSvgFlowContext = () => {
   return {
     svgFlow,
     setSvgFlow,
-    canvas: SvgFlowContextCanvasMutations(svgFlow, setSvgFlow),
+    ...SvgFlowContextNodeMutations(svgFlow, setSvgFlow),
+    ...SvgFlowContextCanvasMutations(svgFlow, setSvgFlow),
   };
 };
 

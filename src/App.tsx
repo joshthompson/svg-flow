@@ -1,7 +1,7 @@
 import { type Component } from 'solid-js';
 
 import styles from './App.module.css';
-import SvgFlowCanvas from './components/svg-flow/SvgFlowCanvas';
+import SvgFlowCanvas from './components/svg-flow/SvgFlowCanvas/SvgFlowCanvas';
 import SvgFlowContextProvider from './context/SvgFlowContext';
 import { SvgFlowConfig, SvgFlowData } from './models/canvas';
 

@@ -1,7 +1,7 @@
 import { type Component } from 'solid-js';
 
-import { SvgFlowNode } from '../../models/canvas';
-import { useSvgFlowContext } from '../../context/SvgFlowContext';
+import { SvgFlowNode } from '../../../models/canvas';
+import { useSvgFlowContext } from '../../../context/SvgFlowContext';
 
 const SvgFlowCanvasNodeContent: Component<{ node: SvgFlowNode }> = props => {
   const { svgFlow } = useSvgFlowContext();

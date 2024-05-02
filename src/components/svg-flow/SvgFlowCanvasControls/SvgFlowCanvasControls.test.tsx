@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from 'solid-testing-library';
 import SvgFlowCanvasControls from './SvgFlowCanvasControls';
-import SvgFlowContextProvider, { useSvgFlowContext } from '../../context/SvgFlowContext';
+import SvgFlowContextProvider, { useSvgFlowContext } from '../../../context/SvgFlowContext';
 
 const TestingComponent = () => {
   const { svgFlow } = useSvgFlowContext();
@@ -30,10 +30,12 @@ describe('SvgFlowCanvasControls', () => {
   });
 
   it('should zoom in and out when clicked', async () => {
-    expect(result.getByTestId('zoom-value').textContent).toEqual('1');
+    const zoomAmount = 1.1;
+    expect(Number(result.getByTestId('zoom-value').textContent)).toEqual(1);
     result.getByTestId('zoom-in').click();
-    expect(result.getByTestId('zoom-value').textContent).toEqual('1.1');
+    expect(Number(result.getByTestId('zoom-value').textContent)).toEqual(1 * zoomAmount);
     result.getByTestId('zoom-out').click();
-    expect(result.getByTestId('zoom-value').textContent).toEqual('1');
+    result.getByTestId('zoom-out').click();
+    expect(Number(result.getByTestId('zoom-value').textContent)).toEqual(1 / zoomAmount);
   });
 });

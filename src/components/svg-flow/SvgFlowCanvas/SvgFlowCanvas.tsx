@@ -1,24 +1,25 @@
 import { type Component, createSignal, onMount, onCleanup, Show } from 'solid-js';
 
-import SvgFlowCanvasDefs from './SvgFlowCanvasDefs';
-import { useSvgFlowContext } from '../../context/SvgFlowContext';
-import SvgFlowCanvasNodeContent from './SvgFlowCanvasNodeContent';
-import SvgFlowCanvasBackground from './SvgFlowCanvasBackground';
-import SvgFlowDebug from './SvgFlowDebug';
-import { snapNode } from '../../utils/node';
-import { SvgFlowConfig, SvgFlowData } from '../../models/canvas';
-import SvgFlowCanvasControls from './SvgFlowCanvasControls';
-import SvgFlowCanvasConnections from './SvgFlowCanvasConnections';
-import SvgFlowCanvasNodes from './SvgFlowCanvasNodes';
+import styles from './SvgFlowCanvas.module.css';
+import SvgFlowCanvasDefs from '../SvgFlowCanvasDefs/SvgFlowCanvasDefs';
+import { useSvgFlowContext } from '../../../context/SvgFlowContext';
+import SvgFlowCanvasNodeContent from '../SvgFlowCanvasNodeContent/SvgFlowCanvasNodeContent';
+import SvgFlowCanvasBackground from '../SvgFlowCanvasBackground/SvgFlowCanvasBackground';
+import SvgFlowDebug from '../SvgFlowDebug/SvgFlowDebug';
+import { snapNode } from '../../../utils/node';
+import { SvgFlowConfig, SvgFlowData } from '../../../models/canvas';
+import SvgFlowCanvasControls from '../SvgFlowCanvasControls/SvgFlowCanvasControls';
+import SvgFlowCanvasConnections from '../SvgFlowCanvasConnections/SvgFlowCanvasConnections';
+import SvgFlowCanvasNodes from '../SvgFlowCanvasNodes/SvgFlowCanvasNodes';
 
 const SvgFlowCanvas: Component<{
   nodeComponent?: typeof SvgFlowCanvasNodeContent,
   data?: SvgFlowData,
   config?: SvgFlowConfig,
 }> = props => {
-  const { svgFlow, setSvgFlow, canvas: { zoom, zoomToFit } } = useSvgFlowContext();
+  const { svgFlow, setSvgFlow, zoom, zoomToFit, setNode } = useSvgFlowContext();
   if (props.data) setSvgFlow('data', props.data);
-  if (props.config) setSvgFlow('config', prev => ({ ...prev, ...props.config }));
+  if (props.config) setSvgFlow('config', props.config);
 
   let svgRef: SVGSVGElement | undefined;
   let containerRef: HTMLDivElement | undefined;
@@ -46,18 +47,14 @@ const SvgFlowCanvas: Component<{
   onCleanup(() => document.documentElement.style.overscrollBehavior = initialOverscroll());
 
   const viewBox = () => {
-    const { x, y } = svgFlow.canvas;
     const width = svgFlow.state.width / svgFlow.canvas.zoom;
     const height = svgFlow.state.height / svgFlow.canvas.zoom;
-    return `${x} ${y} ${width} ${height}`;
+    return `${svgFlow.canvas.x} ${svgFlow.canvas.y} ${width} ${height}`;
   }
 
   const containerStyle = () => ({
-    position: 'relative' as const,
     width: svgFlow.config.width,
     height: svgFlow.config.height,
-    margin: '0 auto',
-    background: 'gray',
   });
 
   const svgStyle = () => ({
@@ -73,7 +70,7 @@ const SvgFlowCanvas: Component<{
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     const hoverNode = svgFlow.data.nodes.find(node => node.id === svgFlow.state.hoverNode);
-    if (hoverNode) {
+    if (hoverNode && svgFlow.config.allowNodeMove) {
       setSvgFlow('state', 'draggingNode', hoverNode.id);
     }
     setDragging(true);
@@ -84,7 +81,7 @@ const SvgFlowCanvas: Component<{
     if (dragging()) {
       const draggingNode = svgFlow.data.nodes.find(node => node.id === svgFlow.state.draggingNode);
       if (draggingNode) {
-        setSvgFlow('data', 'nodes', node => node.id === draggingNode.id, prev => ({
+        setNode(draggingNode.id, prev => ({
           x: prev.x + (event.x - mousePosition().x) / svgFlow.canvas.zoom,
           y: prev.y + (event.y - mousePosition().y) / svgFlow.canvas.zoom,
         }));
@@ -98,12 +95,7 @@ const SvgFlowCanvas: Component<{
 
   const endDrag = () => {
     setDragging(false);
-    setSvgFlow(
-      'data',
-      'nodes',
-      node => node.id === svgFlow.state.draggingNode,
-      prev => snapNode(prev, svgFlow.config.snapTo),
-    );
+    setNode(svgFlow.state.draggingNode, prev => snapNode(prev, svgFlow.config.snapTo));
     setSvgFlow('state', 'draggingNode', undefined);
   }
 
@@ -134,7 +126,10 @@ const SvgFlowCanvas: Component<{
       };
     }
     return { x: 0.5, y: 0.5 };
-  }
+  };
+  const touchDist = (a: Touch, b: Touch) => Math.sqrt(
+    (a.pageX - b.pageX) ** 2 + (a.pageY - b.pageY) ** 2
+  );
   const onTouchEnd = () => prevTouches = undefined;
   const onTouchMove = (event: TouchEvent) => {
     event.preventDefault();
@@ -146,14 +141,8 @@ const SvgFlowCanvas: Component<{
         setSvgFlow('canvas', 'y', prev => prev - deltaY / svgFlow.canvas.zoom);
       }
       if (event.touches.length === 2) {
-        const prevDist = Math.sqrt(
-          (prevTouches[0].pageX - prevTouches[1].pageX) ** 2 +
-          (prevTouches[0].pageY - prevTouches[1].pageY) ** 2
-        );
-        const dist = Math.sqrt(
-          (event.touches[0].pageX - event.touches[1].pageX) ** 2 +
-          (event.touches[0].pageY - event.touches[1].pageY) ** 2
-        );
+        const prevDist = touchDist(prevTouches[0], prevTouches[1]);
+        const dist = touchDist(event.touches[0], event.touches[1]);
         const center = touchCenter([...event.touches]);
         zoom(dist / prevDist, center.x, center.y);
       }
@@ -162,7 +151,7 @@ const SvgFlowCanvas: Component<{
   }
 
   return (
-    <div ref={containerRef} style={containerStyle()}>
+    <div ref={containerRef} style={containerStyle()} class={styles.SvgFlowCanvas} >
       <SvgFlowCanvasControls />
       <svg
         ref={svgRef}

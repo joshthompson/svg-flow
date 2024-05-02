@@ -30,9 +30,9 @@ const SvgFlowContextCanvasMutations = (
     const height = maxY - minY + padding * 2;
     const zoomX = svgFlow.state.width / width;
     const zoomY = svgFlow.state.height / height;
-    setSvgFlow('canvas', 'x', minX - padding);
-    setSvgFlow('canvas', 'y', minY - padding);
-    setSvgFlow('canvas', 'zoom', Math.min(zoomX, zoomY));
+    zoom(Math.min(zoomX, zoomY));
+    setSvgFlow('canvas', 'x', (minX + maxX - svgFlow.state.width / svgFlow.canvas.zoom) / 2);
+    setSvgFlow('canvas', 'y', (minY + maxY - svgFlow.state.height / svgFlow.canvas.zoom) / 2);
   };
 
   const canZoomIn = () => svgFlow.canvas.zoom > minZoom;

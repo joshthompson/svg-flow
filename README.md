@@ -1,4 +1,4 @@
-# SVG Flow
+<img src="https://repository-images.githubusercontent.com/792788041/0be930a5-cfae-4a71-8970-d9ff84eafab4" alt="SVG Flow" />
 
 SVG Flow is a Solid.js project that can be used to render flow chart data onto an SVG canvas.
 

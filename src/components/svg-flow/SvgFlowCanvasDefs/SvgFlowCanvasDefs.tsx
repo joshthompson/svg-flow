@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import { useSvgFlowContext } from '../../context/SvgFlowContext';
+import { useSvgFlowContext } from '../../../context/SvgFlowContext';
 
 const SvgFlowCanvasDefs: Component = () => {
   const { svgFlow } = useSvgFlowContext();

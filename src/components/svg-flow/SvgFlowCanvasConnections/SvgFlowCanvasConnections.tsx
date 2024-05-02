@@ -1,7 +1,7 @@
 import { Index, type Component } from 'solid-js';
 
-import { useSvgFlowContext } from '../../context/SvgFlowContext';
-import SvgFlowCanvasConnection from './SvgFlowCanvasConnection';
+import { useSvgFlowContext } from '../../../context/SvgFlowContext';
+import SvgFlowCanvasConnection from '../SvgFlowCanvasConnection/SvgFlowCanvasConnection';
 
 const SvgFlowCanvasConnections: Component = () => {
   const { svgFlow } = useSvgFlowContext();

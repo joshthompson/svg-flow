@@ -15,6 +15,7 @@ export interface SvgFlowState {
   height: number;
   hoverNode?: SvgFlowResourceID;
   draggingNode?: SvgFlowResourceID;
+  hoverPin?: `${SvgFlowResourceID}.${number}`;
 }
 
 export type SvgFlowNode<T = undefined> = {
@@ -41,7 +42,7 @@ export interface SvgFlowCanvas {
 
 export interface SvgFlowConfig {
   background?: string;
-  grid?: 'dots' | 'lines' | 'none';
+  style?: 'dots' | 'grid' | 'none';
   autoNodeHeight?: boolean;
   snapTo?: number;
   resizeOnInit?: boolean;
@@ -51,6 +52,8 @@ export interface SvgFlowConfig {
   showDebug?: boolean;
   width?: string;
   height?: string;
+  allowNodeMove?: boolean;
+  allowConnectionEdit?: boolean;
 }
 
 export type SvgFlowResourceID = number | string;
