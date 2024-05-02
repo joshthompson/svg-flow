@@ -12,6 +12,7 @@ export const DefaultSvgFlowConfig: SvgFlow['config'] = {
   autoNodeHeight: true,
   resizeOnInit: true,
   showControls: true,
+  showDebug: false,
   width: '800px',
   height: '500px',
 };

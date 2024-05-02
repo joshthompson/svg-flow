@@ -1,4 +1,4 @@
-import { type Component, createSignal, onMount, onCleanup } from 'solid-js';
+import { type Component, createSignal, onMount, onCleanup, Show } from 'solid-js';
 
 import SvgFlowCanvasDefs from './SvgFlowCanvasDefs';
 import { useSvgFlowContext } from '../../context/SvgFlowContext';
@@ -20,7 +20,9 @@ const SvgFlowCanvas: Component<{
   if (props.data) setSvgFlow('data', props.data);
   if (props.config) setSvgFlow('config', prev => ({ ...prev, ...props.config }));
 
+  let svgRef: SVGSVGElement | undefined;
   let containerRef: HTMLDivElement | undefined;
+
   const containerResizeObserver = new ResizeObserver(() => setSvgSize());
   const setSvgSize = () => {
     if (containerRef) {
@@ -39,10 +41,9 @@ const SvgFlowCanvas: Component<{
     if (svgFlow.config.resizeOnInit && svgFlow.data.nodes.length > 1) {
       zoomToFit();
     }
+    svgRef?.addEventListener('touchmove', onTouchMove, { passive: false });
   });
   onCleanup(() => document.documentElement.style.overscrollBehavior = initialOverscroll());
-
-
 
   const viewBox = () => {
     const { x, y } = svgFlow.canvas;
@@ -121,30 +122,55 @@ const SvgFlowCanvas: Component<{
     }
   };
 
-  let lastTouches: TouchList | undefined = undefined;
+  let prevTouches: TouchList | undefined = undefined;
+  const touchCenter = (touches: Touch[]) => {
+    if (svgRef) {
+      const svgRect = svgRef.getBoundingClientRect();
+      const sumX = touches.map(touch => touch.pageX).reduce((a, b) => a + b, 0);
+      const sumY = touches.map(touch => touch.pageY).reduce((a, b) => a + b, 0);
+      return {
+        x: (sumX / touches.length - svgRect.x) / svgRect.width,
+        y: (sumY / touches.length - svgRect.y) / svgRect.height,
+      };
+    }
+    return { x: 0.5, y: 0.5 };
+  }
+  const onTouchEnd = () => prevTouches = undefined;
   const onTouchMove = (event: TouchEvent) => {
-    if (lastTouches) {
+    event.preventDefault();
+    if (prevTouches?.length === event.touches.length) {
       if (event.touches.length === 1) {
-        const deltaX = event.touches[0].pageX - lastTouches[0].pageX;
-        const deltaY = event.touches[0].pageY - lastTouches[0].pageY;
-        setSvgFlow('canvas', 'x', prev => prev + deltaX / svgFlow.canvas.zoom);
-        setSvgFlow('canvas', 'y', prev => prev + deltaY / svgFlow.canvas.zoom);
+        const deltaX = event.touches[0].pageX - prevTouches[0].pageX;
+        const deltaY = event.touches[0].pageY - prevTouches[0].pageY;
+        setSvgFlow('canvas', 'x', prev => prev - deltaX / svgFlow.canvas.zoom);
+        setSvgFlow('canvas', 'y', prev => prev - deltaY / svgFlow.canvas.zoom);
+      }
+      if (event.touches.length === 2) {
+        const prevDist = Math.sqrt(
+          (prevTouches[0].pageX - prevTouches[1].pageX) ** 2 +
+          (prevTouches[0].pageY - prevTouches[1].pageY) ** 2
+        );
+        const dist = Math.sqrt(
+          (event.touches[0].pageX - event.touches[1].pageX) ** 2 +
+          (event.touches[0].pageY - event.touches[1].pageY) ** 2
+        );
+        const center = touchCenter([...event.touches]);
+        zoom(dist / prevDist, center.x, center.y);
       }
     }
-    lastTouches = event.touches;
+    prevTouches = event.touches;
   }
-  const onTouchEnd = () => lastTouches = undefined;
 
   return (
     <div ref={containerRef} style={containerStyle()}>
       <SvgFlowCanvasControls />
       <svg
+        ref={svgRef}
         xmlns='http://www.w3.org/2000/svg'
         viewBox={viewBox()}
         style={svgStyle()}
         onMouseDown={onMouseDown}
         onWheel={onScroll}
-        onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         <SvgFlowCanvasBackground />
@@ -152,7 +178,9 @@ const SvgFlowCanvas: Component<{
         <SvgFlowCanvasConnections />
         <SvgFlowCanvasNodes nodeComponent={props.nodeComponent} />
       </svg>
-      { false && <SvgFlowDebug /> }
+      <Show when={svgFlow.config.showDebug}>
+        <SvgFlowDebug />
+      </Show>
     </div>
   );
 };

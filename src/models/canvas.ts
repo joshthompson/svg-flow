@@ -48,6 +48,7 @@ export interface SvgFlowConfig {
   stroke?: string;
   strokeWidth?: number;
   showControls?: boolean;
+  showDebug?: boolean;
   width?: string;
   height?: string;
 }
