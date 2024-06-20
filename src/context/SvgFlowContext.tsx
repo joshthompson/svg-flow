@@ -3,6 +3,7 @@ import { createStore } from 'solid-js/store';
 import { SvgFlow } from '../models/canvas';
 import SvgFlowContextCanvasMutations from './SvgFlowContextCanvasMutations';
 import SvgFlowContextNodeMutations from './SvgFlowContextNodeMutations';
+import SvgFlowContextConnectionMutations from './SvgFlowContextConnectionMutations';
 
 export const DefaultSvgFlowConfig: SvgFlow['config'] = {
   background: '#FDFDFD',
@@ -58,6 +59,7 @@ export const useSvgFlowContext = () => {
     setSvgFlow,
     ...SvgFlowContextNodeMutations(svgFlow, setSvgFlow),
     ...SvgFlowContextCanvasMutations(svgFlow, setSvgFlow),
+    ...SvgFlowContextConnectionMutations(svgFlow),
   };
 };
 

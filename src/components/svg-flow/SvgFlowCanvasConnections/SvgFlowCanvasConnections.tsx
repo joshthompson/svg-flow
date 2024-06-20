@@ -4,11 +4,11 @@ import { useSvgFlowContext } from '../../../context/SvgFlowContext';
 import SvgFlowCanvasConnection from '../SvgFlowCanvasConnection/SvgFlowCanvasConnection';
 
 const SvgFlowCanvasConnections: Component = () => {
-  const { svgFlow } = useSvgFlowContext();
+  const { connectionsWithDetails } = useSvgFlowContext();
   return (
     <g class='connections'>
-      <Index each={svgFlow.data.connections}>
-        {(_, index) => <SvgFlowCanvasConnection index={index} />}
+      <Index each={connectionsWithDetails()}>
+        {connection => <SvgFlowCanvasConnection connection={connection()} />}
       </Index>
     </g>
   );

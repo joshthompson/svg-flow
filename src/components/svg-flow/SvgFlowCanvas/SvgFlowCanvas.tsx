@@ -102,7 +102,7 @@ const SvgFlowCanvas: Component<{
   document.documentElement.addEventListener('mousemove', event => onMouseMove(event));
   document.documentElement.addEventListener('mouseup', () => endDrag());
 
-  const onScroll = (event: WheelEvent) => {
+  const onWheel = (event: WheelEvent) => {
     event.preventDefault();
     if (event.ctrlKey || event.shiftKey || event.metaKey) {
       const x = event.offsetX / svgFlow.state.width;
@@ -148,7 +148,12 @@ const SvgFlowCanvas: Component<{
       }
     }
     prevTouches = event.touches;
-  }
+  };
+
+  const abortEvent = (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
 
   return (
     <div ref={containerRef} style={containerStyle()} class={styles.SvgFlowCanvas} >
@@ -159,8 +164,9 @@ const SvgFlowCanvas: Component<{
         viewBox={viewBox()}
         style={svgStyle()}
         onMouseDown={onMouseDown}
-        onWheel={onScroll}
+        onWheel={onWheel}
         onTouchEnd={onTouchEnd}
+        onScroll={abortEvent}
       >
         <SvgFlowCanvasBackground />
         <SvgFlowCanvasDefs />

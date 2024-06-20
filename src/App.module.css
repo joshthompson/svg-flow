@@ -7,7 +7,7 @@
     color: var(--main-light);
     padding: var(--spacing-medium);
     margin-bottom: var(--spacing-large);
-    background:
+    background-image:
       linear-gradient(to bottom, #39addb40, #2a3c5766),
       linear-gradient(135deg, #670d10, #092756);
     text-shadow: var(--drop-shadow);
@@ -16,7 +16,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      --line-color: rgba(255, 255, 255, 0.07);
+      --line-color: rgba(255, 255, 255, 0.15);
       --grid-size: 1.7rem;
       background-image: 
         linear-gradient(var(--line-color), transparent 1px),

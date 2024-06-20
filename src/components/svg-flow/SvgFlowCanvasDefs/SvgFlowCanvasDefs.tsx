@@ -17,7 +17,7 @@ const SvgFlowCanvasDefs: Component = () => {
       >
         <path
           stroke={svgFlow.config.stroke}
-          stroke-width={svgFlow.config.strokeWidth}
+          stroke-width={1}
           stroke-linecap='round'
           stroke-linejoin='round'
           fill='none'

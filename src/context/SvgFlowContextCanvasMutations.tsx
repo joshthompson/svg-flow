@@ -28,8 +28,8 @@ const SvgFlowContextCanvasMutations = (
     const maxY = Math.max(...svgFlow.data.nodes.map(node => node.y + node.height));
     const width = maxX - minX + padding * 2;
     const height = maxY - minY + padding * 2;
-    const zoomX = svgFlow.state.width / width;
-    const zoomY = svgFlow.state.height / height;
+    const zoomX = (svgFlow.state.width / svgFlow.canvas.zoom) / width;
+    const zoomY = (svgFlow.state.height / svgFlow.canvas.zoom) / height;
     zoom(Math.min(zoomX, zoomY));
     setSvgFlow('canvas', 'x', (minX + maxX - svgFlow.state.width / svgFlow.canvas.zoom) / 2);
     setSvgFlow('canvas', 'y', (minY + maxY - svgFlow.state.height / svgFlow.canvas.zoom) / 2);

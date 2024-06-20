@@ -40,6 +40,11 @@ export interface SvgFlowCanvas {
   y: number;
 }
 
+export interface Point {
+  x: number;
+  y: number;
+}
+
 export interface SvgFlowConfig {
   background?: string;
   style?: 'dots' | 'grid' | 'none';

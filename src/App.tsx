@@ -9,13 +9,13 @@ const App: Component = () => {
 
   const svgFlowData: SvgFlowData = {
     nodes: [
-      { id: 0, x: 35, y: 35, width: 250, height: 70, pins: 2 },
-      { id: 1, x: 35, y: 165, width: 250, height: 70, pins: 1 },
-      { id: 2, x: 400, y: 165, width: 250, height: 70, pins: 2 },
-      { id: 3, x: 235, y: 295, width: 250, height: 70, pins: 1 },
-      { id: 4, x: 565, y: 295, width: 250, height: 70, pins: 1 },
-      { id: 5, x: 235, y: 425, width: 250, height: 70, pins: 1 },
-      { id: 6, x: 565, y: 425, width: 250, height: 70, pins: 1 },
+      { id: 0, x: 35, y: 35, width: 250, height: 70, pins: 0 },
+      { id: 1, x: 35, y: 165, width: 250, height: 70, pins: 0 },
+      { id: 2, x: 400, y: 165, width: 250, height: 70, pins: 0 },
+      { id: 3, x: 235, y: 295, width: 250, height: 70, pins: 0 },
+      { id: 4, x: 565, y: 295, width: 250, height: 70, pins: 0 },
+      { id: 5, x: 235, y: 425, width: 250, height: 70, pins: 0 },
+      { id: 6, x: 565, y: 425, width: 250, height: 70, pins: 0 },
     ],
     connections: [
       { id: 0, from: 0, to: 1, pin: 0 },
